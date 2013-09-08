@@ -1,0 +1,128 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>IMR -- an ARP table attack program</title>
+<link rev="made" href="mailto:root@gohan37.freebsd.org" />
+</head>
+
+<body style="background-color: white">
+
+<p><a name="__index__"></a></p>
+<!-- INDEX BEGIN -->
+
+<ul>
+
+	<li><a href="#name">NAME </a></li>
+	<li><a href="#synopsis">SYNOPSIS</a></li>
+	<li><a href="#description">DESCRIPTION</a></li>
+	<ul>
+
+		<li><a href="#how_it_works">HOW IT WORKS</a></li>
+		<li><a href="#why_it_works">WHY IT WORKS</a></li>
+	</ul>
+
+	<li><a href="#caveats">CAVEATS</a></li>
+	<li><a href="#other_info">OTHER INFO</a></li>
+	<li><a href="#copyright">COPYRIGHT</a></li>
+	<li><a href="#author">AUTHOR</a></li>
+</ul>
+<!-- INDEX END -->
+
+<hr />
+<p>
+</p>
+<hr />
+<h1><a name="name">NAME</a></h1>
+<pre>
+
+IMR -- an ARP table attack program</pre>
+<p>
+</p>
+<hr />
+<h1><a name="synopsis">SYNOPSIS</a></h1>
+<p><strong>imr</strong> <em>ether_addr</em> <em>ip_addr</em> <em>ether_addr</em> <em>ip_addr</em> <em>ether_addr</em> <em>ip_addr</em> <em>interface</em> [<em>logfile</em>]</p>
+<p>
+</p>
+<hr />
+<h1><a name="description">DESCRIPTION</a></h1>
+<p><strong>IMR</strong> is short for 'In Medias Res'. It is a program that allows you to perform an ARP table 
+attack on two hosts, named  <em>client</em> and <em>server</em>. Thus, all traffic from the server to 
+the client will be sent to you, as well as all traffic from the client to the server. <strong>IMR</strong>
+simply routes all incoming data to the appropriate host and logs it to your disk for further
+inspections.</p>
+<p><strong>IMR</strong> gives you the ability to check whether your network is secured against ARP
+attacks. Furthermore, it allows you to analyze networking protocols in great detail
+without changing data.</p>
+<p>
+</p>
+<h2><a name="how_it_works">HOW IT WORKS</a></h2>
+<p>This is what <strong>IMR</strong> does:</p>
+<dl>
+<dt><strong><a name="item_send">Send (forged) ARP replies</a></strong><br />
+</dt>
+<dd>
+Two ARP replies of the form 'a.b.c.d is at AB:CD:EF:GH' are sent to both the client
+and the server, hence ensuring that both hosts consider this PC the current communication
+partner.
+</dd>
+<p></p>
+<dt><strong><a name="item_read_data">Read data</a></strong><br />
+</dt>
+<dd>
+Now all incoming data is read. A loop checks whether they originate from the client or from
+the server. During this check, the destination address of the current Ethernet frame is set
+to the proper MAC address, so that the packets don't get stuck.
+</dd>
+<p></p>
+<dt><strong><a name="item_log_data">Log data</a></strong><br />
+</dt>
+<dd>
+Everything is logged in raw format, i.e. each packet plus all of its payload is written to
+the disk. The log file does not look good, but it will allow a complete reconstruction of
+each packet.
+</dd>
+<p></p>
+<dt><strong><a name="item_reset_the_arp_tables">Reset the ARP tables</a></strong><br />
+</dt>
+<dd>
+After the routing has been cancelled, two ARP replies are sent that restore the ARP
+table, so that the proper MAC addresses are set.
+</dd>
+<p></p></dl>
+<p>
+</p>
+<h2><a name="why_it_works">WHY IT WORKS</a></h2>
+<p>To work properly, ARP needs an ARP table, in which pairs of MAC addresses and IP addresses
+are saved. This is why your kernel 'knows' the destination address of the Ethernet frame. Unfortunately,
+ARP doesn't check whether packets have been requested or not. So you are able to poison the ARP
+table by sending your own ARP replies that say something like 'You will find this IP address at my
+MAC address'. There is no possibility for ARP to validate your MAC address / IP address pair,
+so it will be added to the table.</p>
+<p>
+</p>
+<hr />
+<h1><a name="caveats">CAVEATS</a></h1>
+<p>Please be aware of the fact that <strong>IMR</strong> is a diagnostic application. The code will give
+you some information about the <em>Berkeley Packet Filter</em>, <strong>BPF</strong>, but <strong>IMR</strong> is really <em>not</em>
+meant as an attack tool of any sort. Even if you are the administrator of your LAN,
+you are by no means allowed to capture the data of your users without telling them...</p>
+<p>
+</p>
+<hr />
+<h1><a name="other_info">OTHER INFO</a></h1>
+<p>You might find newer versions of IMR at <a href="http://canmore.sdf-eu.org">http://canmore.sdf-eu.org</a></p>
+<p>
+</p>
+<hr />
+<h1><a name="copyright">COPYRIGHT</a></h1>
+<p><strong>IMR</strong> is licenced under the <strong>GNU General Public Licence</strong>. Read the file <strong>GPL</strong> in IMR's 
+directory for more information.</p>
+<p>
+</p>
+<hr />
+<h1><a name="author">AUTHOR</a></h1>
+<p><strong>IMR</strong> has been written by Bastian Rieck &lt;canmore [AT] sdf-eu.org&gt;</p>
+
+</body>
+
+</html>
